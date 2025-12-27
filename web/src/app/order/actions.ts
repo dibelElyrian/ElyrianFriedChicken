@@ -1,0 +1,14 @@
+'use server'
+
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export async function getOrder(id: number) {
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('*, items:order_items(quantity, price_at_time, menu_item:menu_items(name, image_url))')
+    .eq('id', id)
+    .single()
+  
+  if (error) return null
+  return data
+}

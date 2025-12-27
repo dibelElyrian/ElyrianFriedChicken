@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { Trash2, Minus, Plus, ArrowLeft, CheckCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart()
@@ -14,6 +15,7 @@ export default function CartPage() {
   const [lastOrderTotal, setLastOrderTotal] = useState(0)
   const [activeQr, setActiveQr] = useState('ub')
   const [timestamp, setTimestamp] = useState(0)
+  const router = useRouter()
 
   useEffect(() => {
     setTimestamp(Date.now())
@@ -63,72 +65,14 @@ export default function CartPage() {
       if (itemsError) throw itemsError
 
       setLastOrderTotal(cartTotal)
-      setOrderPlaced(true)
       clearCart()
+      router.push(`/order/${order.id}`)
     } catch (error) {
       console.error('Checkout error:', error)
       alert('Failed to place order. Please try again.')
     } finally {
       setLoading(false)
     }
-  }
-
-  if (orderPlaced) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="max-w-lg w-full p-8 bg-card rounded-2xl shadow-lg text-center border border-border">
-          <div className="w-20 h-20 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-green-500" />
-          </div>
-          <h2 className="text-3xl font-bold mb-2 text-foreground">Order Placed!</h2>
-          <p className="text-muted-foreground mb-8">Thanks {name}, we've received your order.</p>
-          
-          <div className="bg-muted p-6 rounded-xl mb-8 border border-border shadow-sm">
-            <h3 className="font-bold text-foreground mb-4 text-center">Scan to Pay</h3>
-            
-            {/* Payment Method Tabs */}
-            <div className="flex justify-center gap-2 mb-6">
-              {paymentMethods.map((method) => (
-                <button
-                  key={method.id}
-                  onClick={() => setActiveQr(method.id)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    activeQr === method.id
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-card text-muted-foreground hover:bg-border'
-                  }`}
-                >
-                  {method.name}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex flex-col items-center mb-6">
-              <div className={`relative w-96 h-96 bg-white rounded-lg overflow-hidden mb-3 border-2 ${activeMethod.border}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={`${activeMethod.image}?t=${timestamp}`}
-                  alt={`${activeMethod.name} QR Code`}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className={`font-bold text-lg ${activeMethod.color}`}>{activeMethod.name}</p>
-              <p className="text-sm text-muted-foreground">Ryan Fudolig Serdan</p>
-            </div>
-
-            <div className="text-sm text-muted-foreground text-center bg-card p-4 rounded-lg border border-border">
-              <p className="mb-1">Amount Due:</p>
-              <p className="font-bold text-2xl text-foreground mb-2">₱{lastOrderTotal.toFixed(2)}</p>
-              <p className="text-xs text-muted-foreground">Please take a screenshot of your payment and send it to me.</p>
-            </div>
-          </div>
-          
-          <Link href="/" className="block w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-red-700 transition">
-            Back to Menu
-          </Link>
-        </div>
-      </div>
-    )
   }
 
   if (cart.length === 0) {
