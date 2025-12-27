@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabaseClient'
 import MenuGrid from '@/components/MenuGrid'
 import Image from 'next/image'
+import OrderCutoffLabel from '@/components/OrderCutoffLabel'
 
-export const revalidate = 0
+export const revalidate = 3600 // Revalidate every hour
 
 export default async function Home() {
   const { data: menuItems, error } = await supabase
@@ -49,7 +50,7 @@ export default async function Home() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-foreground">Morning Menu</h2>
-          <span className="text-sm text-muted-foreground">Order before 9:00 AM</span>
+          <OrderCutoffLabel />
         </div>
 
         {menuItems && menuItems.length > 0 ? (

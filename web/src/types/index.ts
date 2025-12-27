@@ -14,6 +14,7 @@ export interface CartItem extends MenuItem {
 
 export interface Order {
   id: number
+  order_uuid: string
   created_at: string
   user_email: string
   status: string

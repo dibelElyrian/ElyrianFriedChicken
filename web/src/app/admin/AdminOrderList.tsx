@@ -77,6 +77,12 @@ export default function AdminOrderList({
                 <td className="p-4">
                   <div className="font-medium text-gray-900">{order.user_email}</div>
                   <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                  {order.scheduled_for && (
+                    <div className="text-xs text-blue-600 font-medium mt-1 flex items-center gap-1">
+                      <Clock size={10} />
+                      {new Date(order.scheduled_for).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    </div>
+                  )}
                 </td>
                 <td className="p-4">
                   <div className="space-y-1">

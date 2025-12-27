@@ -9,7 +9,7 @@ export const revalidate = 0
 
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const order = await getOrder(parseInt(id))
+  const order = await getOrder(id)
 
   if (!order) {
     notFound()
@@ -40,6 +40,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               <p className="text-muted-foreground text-sm">
                 Placed on {new Date(order.created_at).toLocaleString()}
               </p>
+              {order.scheduled_for && (
+                 <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mt-1 flex items-center gap-1">
+                   <Clock size={14} />
+                   Scheduled for: {new Date(order.scheduled_for).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+                 </p>
+              )}
             </div>
             <div className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
               isCancelled ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'
